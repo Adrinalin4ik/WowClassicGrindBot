@@ -233,9 +233,9 @@ namespace Core.Goals
 
         private async Task GoalExit()
         {
-            await input.TapLastTargetKey("Last target key");
-            await input.TapInteractKey("Interract key");
-            await Task.Delay(5000);
+            // await input.TapLastTargetKey("Last target key");
+            // await input.TapInteractKey("Interract key");
+            // await Task.Delay(5000);
             AddEffect(GoapKey.shouldloot, false);
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
 

@@ -2,8 +2,9 @@
     "ClassName": "Hunter",
     "Loot": true,
     "Skin": false,
+    "UseMount": false,
   
-    "PathFilename":  "37_Wetlands_full.json",
+    "PathFilename":  "40_spiders_wetlands.json",
     "PathThereAndBack": false,
     "PathReduceSteps": false,
   
@@ -29,16 +30,31 @@
           "Log": false,
           "StopBeforeCast": false,
           "Cooldown": 0.5,
-          "Requirements": ["TargetHealth%>99"]
-        },
+          "Requirements": ["TargetHealth%>99", "MaxRange>30"]
+        }
       ]
     },
     "Combat": {
       "Sequence": [
         {
+          "Name": "Deadzone",
+          "StepBackAfterCast": 1000,
+          "Cooldown": 1,
+          "Key": "K",
+          "Requirements": ["InDeadZoneRange"]
+        },
+        {
           "Name": "Approach",
           "Log": false,
-          "Cooldown": 10
+          "Cooldown": 10,
+          "Key":"K"
+        },
+        {
+          "Name": "Bestial Wrath",
+          "Log": false,
+          "Cooldown": 120,
+          "Key":"F1",
+          "Requirements": ["Mana%>80"]
         },
         {
           "Name": "Serpent Sting",
@@ -54,7 +70,7 @@
           "MinMana": 105,
           "Key": "2",
           "Cooldown": 20,
-          "Requirements": ["not InMeleeRange"]
+          "Requirements": ["not InMeleeRange", "Mana%>80"]
         },
         {
           "Name": "Intimidation",
@@ -87,6 +103,13 @@
           "Log": false,
           "Key": "4",
           "Cooldown": 1
+        },
+        {
+          "Name": "Heal pet",
+          "Key": "N4",
+          "HasCastBar": true,
+          "StopBeforeCast": true,
+          "Requirements": ["Has Pet", "PetHealth%<40"]
         }
       ]
     },
@@ -96,7 +119,7 @@
             "Name": "Summon Pet",
             "HasCastBar": true,
             "StopBeforeCast": true,
-            "Key": "F10",
+            "Key": "N2",
             "MinMana": 663,
             "Requirements": ["not Has Pet"],
             "Log": false,
@@ -106,7 +129,7 @@
             "Name": "Ressurect Pet",
             "HasCastBar": true,
             "StopBeforeCast": true,
-            "Key": "F6",
+            "Key": "N3",
             "MinMana": 663,
             "Requirements": ["not Has Pet"],
             "Log": false,
@@ -131,6 +154,25 @@
           "Cooldown": 10,
           "Log": false,
           "DelayAfterCast": 30000
+        },
+        {
+          "Name": "Heal pet",
+          "Key": "N4",
+          "HasCastBar": true,
+          "StopBeforeCast": true,
+          "Requirements": ["Has Pet", "PetHealth%<40"]
+        }
+      ]
+    },
+    
+    "NPC": {
+      "Sequence": [
+        {
+          "Name": "Sell",
+          "Key": "C",
+          "Requirement": "BagFull",
+          "PathFilename": "wetland_vendor.json",
+          "Cost": 6
         }
       ]
     }
