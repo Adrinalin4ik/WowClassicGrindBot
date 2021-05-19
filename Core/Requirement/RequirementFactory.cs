@@ -33,9 +33,7 @@ namespace Core
             CreateMinRequirement(item.RequirementObjects, "Rage", item.MinRage);
             CreateMinRequirement(item.RequirementObjects, "Energy", item.MinEnergy);
             CreateMinComboPointsRequirement(item.RequirementObjects, item);
-
-            if(item.WhenUsable)
-                CreateActionUsableRequirement(item.RequirementObjects, item);
+            CreateActionUsableRequirement(item.RequirementObjects, item);
 
             item.CreateCooldownRequirement();
             item.CreateChargeRequirement();
@@ -66,7 +64,7 @@ namespace Core
         }
         private void CreateActionUsableRequirement(List<Requirement> RequirementObjects, KeyAction item)
         {
-            if (!string.IsNullOrEmpty(item.Key))
+            if (item.WhenUsable && !string.IsNullOrEmpty(item.Key))
             {
                 RequirementObjects.Add(new Requirement
                 {
@@ -173,6 +171,8 @@ namespace Core
                     {  "Aspect of the Hawk", ()=> playerReader.Buffs.Aspect },
                     {  "Aspect of the Wild", ()=> playerReader.Buffs.Aspect },
                     {  "Aspect of the Monkey", ()=> playerReader.Buffs.Aspect },
+                    {  "Rapid Fire", ()=> playerReader.Buffs.RapidFire },
+                    {  "Quick Shots", ()=> playerReader.Buffs.QuickShots },
 
                     // Debuff Section
                     // Druid Debuff

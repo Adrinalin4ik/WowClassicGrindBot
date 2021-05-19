@@ -63,7 +63,7 @@ local CELL_SPACING = 1 -- 0 or 1
 local itemNum = 0
 local equipNum = 0
 local actionNum = 1
-local bagNum = 0
+local bagNum = -1
 local globalCounter = 0
 -- Global table of all items player has
 local items = {}
@@ -82,6 +82,11 @@ local MAIN_MIN = 1
 local MAIN_MAX = 12
 local BOTTOM_LEFT_MIN = 61
 local BOTTOM_LEFT_MAX = 72
+
+-- Timers
+local timeUpdateSec = 0.1
+local globalTime = 0
+local lastLoot = 0
 
 DataToColor.frames = nil
 DataToColor.r = 0
@@ -194,6 +199,16 @@ local f = CreateFrame("Frame")
 f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 f:SetScript("OnEvent", OnCombatEvent)
 
+local l = CreateFrame("Frame")
+l:RegisterEvent("LOOT_CLOSED")
+l:SetScript("OnEvent", 
+function(self, event, arg1)														
+    if event == "LOOT_CLOSED" then
+        lastLoot = globalTime
+    end
+end
+)
+
 function DataToColor:OnMerchantShow(self, event, messageType, message)
     
     TotalPrice = 0
@@ -300,6 +315,14 @@ function DataToColor:SetupRequirements()
 	SetCVar('Gamma',1,'[]')
 end
 
+function timerTick()
+	globalTime = globalTime + 1
+    if globalTime > (256 * 256 * 256 - 1) then
+        globalTime = 0
+    end
+	C_Timer.After(timeUpdateSec, timerTick)
+end
+
 -- This function is able to pass numbers in range 0 to 16777215
 function integerToColor(i)
     -- r,g,b are integers in range 0-255
@@ -403,7 +426,7 @@ function DataToColor:CreateFrames(n)
                     itemNum = 1
                 end
                 if bagNum >= 5 then
-                    bagNum = 1
+                    bagNum = 0
                 end
 
                 -- Worn inventory start.
@@ -451,9 +474,13 @@ function DataToColor:CreateFrames(n)
             MakePixelSquareArr(integerToColor(self:isActionUseable(49,72)), 36) 
             MakePixelSquareArr(integerToColor(self:isActionUseable(73,96)), 42) 
 
+            local freeSlots, bagType = GetContainerNumFreeSlots(bagNum)
+            if bagType ~= nil then
+                bagType = 0
+            end
+            MakePixelSquareArr(integerToColor(bagType * 1000000 + bagNum * 100000 + freeSlots * 1000 + self:bagSlots(bagNum)), 37) -- BagType + Index + FreeSpace + BagSlots
 
-            -- Number of slots each bag contains, not including our default backpack
-            MakePixelSquareArr(integerToColor(bagNum * 1000 + self:bagSlots(bagNum)), 37) -- Bag slots
+
             MakePixelSquareArr(integerToColor(self:getHealthMax("pet")), 38)
             MakePixelSquareArr(integerToColor(self:getHealthCurrent("pet")), 39)
             -- 40
@@ -497,6 +524,10 @@ function DataToColor:CreateFrames(n)
 
             MakePixelSquareArr(integerToColor(DataToColor:getGuid("pet")),68) -- pet guid
             MakePixelSquareArr(integerToColor(DataToColor:getGuid("pettarget")),69) -- pet target
+
+            -- Timers
+            MakePixelSquareArr(integerToColor(globalTime), 70)
+            MakePixelSquareArr(integerToColor(lastLoot), 71)
 
             self:HandleEvents()
         end
@@ -656,7 +687,9 @@ function DataToColor:getBuffsForClass()
     elseif CC == "SHAMAN" then
         class=class+self:MakeIndexBase2(self:GetBuffs("Lightning Shield"), 10);
     elseif CC == "HUNTER" then
-        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10);
+        class=class+self:MakeIndexBase2(self:GetBuffs("Aspect of"), 10)+
+        self:MakeIndexBase2(self:GetBuffs("Rapid Fire"), 11)+
+        self:MakeIndexBase2(self:GetBuffs("Quick Shots"), 12);
     end
     return class;
 end
@@ -1107,9 +1140,9 @@ function DataToColor:isActionUseable(min,max)
     local isUsableBits = 0
     -- Loops through main action bar slots 1-12
     for i = min, max do
-        local status, b, available = GetActionCooldown(i)
+        local start = GetActionCooldown(i)
         local isUsable, notEnough = IsUsableAction(i)
-        if isUsable == true and notEnough==false and status == 0 and available == 1  then
+        if start == 0 and isUsable == true and notEnough == false then
             isUsableBits = isUsableBits + (2 ^ (i - min))
         end
     end
