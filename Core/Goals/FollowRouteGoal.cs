@@ -271,6 +271,7 @@ namespace Core.Goals
                         if (this.playerReader.HasTarget && !playerReader.PlayerBitValues.TargetIsDead)
                         {
                             logger.LogInformation("Has target!");
+                            await Task.Delay(20);
                             return true;
                         }
                         else
