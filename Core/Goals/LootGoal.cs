@@ -147,7 +147,7 @@ namespace Core.Goals
             Log($"Loot Finished! LastLoot = {LastLoot}");
 
             SendActionEvent(new ActionEventArgs(GoapKey.shouldloot, false));
-            await Task.Delay(1);
+            await Task.Delay(4500);
 
             if (!classConfiguration.Skin)
             {

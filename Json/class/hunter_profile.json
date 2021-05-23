@@ -4,7 +4,7 @@
     "Skin": false,
     "UseMount": false,
   
-    "PathFilename":  "40_spiders_wetlands.json",
+    "PathFilename":  "__Path_20210522145218.json",
     "PathThereAndBack": false,
     "PathReduceSteps": false,
   
@@ -55,22 +55,6 @@
           "Cooldown": 120,
           "Key":"F1",
           "Requirements": ["Mana%>80"]
-        },
-        {
-          "Name": "Serpent Sting",
-          "StopBeforeCast": false,
-          "MinMana": 115,
-          "Key": "3",
-          "Cooldown": 20,
-          "Requirements": ["not InMeleeRange"]
-        },
-        {
-          "Name": "Arcane shot",
-          "StopBeforeCast": false,
-          "MinMana": 105,
-          "Key": "2",
-          "Cooldown": 20,
-          "Requirements": ["not InMeleeRange", "Mana%>80"]
         },
         {
           "Name": "Intimidation",
